@@ -1,0 +1,105 @@
+import re
+VOCAB = r'D:\Claude cli\MyApp\yingo\src\data\vocab-sample.ts'
+with open(VOCAB,'r',encoding='utf-8') as f:
+    c = f.read()
+c = re.sub(r'];\s*$', '', c)
+ids = re.findall(r'id:\s*"w(\d+)"', c)
+cid = max(int(x) for x in ids) if ids else 0
+print(f'Current: w{cid}')
+d = [
+('psychology','/saɪˈkɒlədʒi/','n. 心理学','study of mind','Cognitive psychology research.','认知心理学研究。','psycho(心灵)+logy'),
+('perception','/pəˈsepʃn/','n. 感知','awareness','Visual perception is complex.','视觉感知很复杂。','per+cept(抓)+ion'),
+('consciousness','/ˈkɒnʃəsnəs/','n. 意识','awareness of surroundings','Consciousness remains a mystery.','意识仍然是个谜。'),
+('subconscious','/ˌsʌbˈkɒnʃəs/','adj. 潜意识的','below awareness','Subconscious thoughts influence behavior.','潜意识影响行为。'),
+('temperament','/ˈtemprəmənt/','n. 气质','natural disposition','A calm temperament helps.','冷静的气质有帮助。'),
+('introvert','/ˈɪntrəvɜːt/','n. 内向者','quiet person','Introverts prefer solitude.','内向者更喜欢独处。','intro(向内)+vert(转)'),
+('extrovert','/ˈekstrəvɜːt/','n. 外向者','outgoing person','Extroverts enjoy socializing.','外向者喜欢社交。','extro(向外)+vert(转)'),
+('empathy','/ˈempəθi/','n. 共情','understanding others feelings','Show empathy to patients.','对患者表示共情。','em+pathy(感情)'),
+('resilience','/rɪˈzɪliəns/','n. 韧性','ability to recover','Build emotional resilience.','建立情绪韧性。'),
+('impulse','/ˈɪmpʌls/','n. 冲动','sudden urge','Control impulse buying.','控制冲动消费。','im+pulse(推动)'),
+('phobia','/ˈfəʊbiə/','n. 恐惧症','irrational fear','Social phobia is common.','社交恐惧症很常见。'),
+('obsession','/əbˈseʃn/','n. 执念','compulsive preoccupation','Work obsession harms health.','工作执念伤害健康。'),
+('compulsion','/kəmˈpʌlʃn/','n. 强迫','irresistible urge','Compulsive behavior needs therapy.','强迫行为需要治疗。'),
+('inhibition','/ˌɪnhɪˈbɪʃn/','n. 抑制','restraint','Overcome social inhibitions.','克服社交抑制。'),
+('stimulus','/ˈstɪmjələs/','n. 刺激','something causing response','Visual stimulus affects attention.','视觉刺激影响注意力。','stimul(刺)+us'),
+('conditioning','/kənˈdɪʃənɪŋ/','n. 条件反射','learned response','Classical conditioning in dogs.','狗的经典条件反射。'),
+('reinforcement','/ˌriːɪnˈfɔːsmənt/','n. 强化','strengthening behavior','Positive reinforcement works.','正强化有效。'),
+('motivation','/ˌməʊtɪˈveɪʃn/','n. 动机','reason for action','Intrinsic motivation is powerful.','内在动机很强大。','motiv(移动)+ation'),
+('cognition','/kɒɡˈnɪʃn/','n. 认知','mental process','Social cognition develops early.','社会认知发展较早。','cogn(知道)+ition'),
+('disposition','/ˌdɪspəˈzɪʃn/','n. 性情','natural tendency','A friendly disposition helps.','友好的性情有帮助。'),
+('temperament','/ˈtemprəmənt/','n. 性情','behavioral style','Each child has a temperament.','每个孩子都有性情。'),
+('narrative','/ˈnærətɪv/','n. 叙述','story','The narrative is compelling.','叙述引人入胜。','narr(讲述)+ative'),
+('metaphor','/ˈmetəfə/','n. 隐喻','figurative comparison','Life is a metaphor for journey.','生命是旅程的隐喻。','meta(超越)+phor(携带)'),
+('irony','/ˈaɪrəni/','n. 讽刺','opposite meaning','The irony was lost on him.','他没听出讽刺。'),
+('satire','/ˈsætaɪə/','n. 讽刺文学','mocking humor','Political satire is popular.','政治讽刺文学很流行。'),
+('rhetoric','/ˈretərɪk/','n. 修辞学','art of persuasion','Rhetoric skills are valuable.','修辞技巧很有价值。'),
+('eloquence','/ˈeləkwəns/','n. 雄辩','fluent speaking','Her eloquence impressed judges.','她的雄辩打动了评委。','e+loqu(说)+ence'),
+('discourse','/ˈdɪskɔːs/','n. 话语','formal discussion','Academic discourse is complex.','学术话语很复杂。','dis+course(跑)'),
+('propaganda','/ˌprɒpəˈɡændə/','n. 宣传','biased information','War propaganda was effective.','战争宣传很有效。'),
+('censorship','/ˈsensəʃɪp/','n. 审查制度','content control','Internet censorship is controversial.','互联网审查有争议。'),
+('journalism','/ˈdʒɜːnəlɪzəm/','n. 新闻业','news reporting','Investigative journalism uncovers truth.','调查新闻揭露真相。'),
+('editorial','/ˌedɪˈtɔːriəl/','n. 社论','opinion piece','The editorial criticized policy.','社论批评了政策。'),
+('broadcast','/ˈbrɔːdkɑːst/','v. 广播','to transmit','Broadcast live on TV.','在电视上直播。'),
+('podcast','/ˈpɒdkɑːst/','n. 播客','audio program','Educational podcasts are popular.','教育播客很流行。'),
+('tabloid','/ˈtæblɔɪd/','n. 小报','sensational newspaper','Tabloid stories are exaggerated.','小报故事被夸大了。'),
+('manuscript','/ˈmænjuskrɪpt/','n. 手稿','written document','Submit the manuscript.','提交手稿。','manu(手)+script(写)'),
+('draft','/drɑːft/','n. 草稿','preliminary version','First draft of the essay.','论文初稿。'),
+('revise','/rɪˈvaɪz/','v. 修订','to modify','Revise the document.','修订文件。','re+vis(看)+e'),
+('proofread','/ˈpruːfriːd/','v. 校对','to check for errors','Proofread your work.','校对你的工作。'),
+('publish','/ˈpʌblɪʃ/','v. 出版','to make public','Publish research findings.','发表研究成果。'),
+('circulate','/ˈsɜːkjuleɪt/','v. 流通','to spread around','Information circulates quickly.','信息流通很快。','circul(环)+ate'),
+('convey','/kənˈveɪ/','v. 传达','to communicate','Words convey meaning.','语言传达意义。','con+vey(路)'),
+('articulate','/ɑːˈtɪkjuleɪt/','v. 清晰表达','to express clearly','Articulate your ideas clearly.','清晰表达你的想法。'),
+('imply','/ɪmˈplaɪ/','v. 暗示','to suggest indirectly','What do you imply?','你在暗示什么？','im+ply(折叠)'),
+('insinuate','/ɪnˈsɪnjueɪt/','v. 暗指','to hint at','Do not insinuate.','不要暗指。'),
+('paraphrase','/ˈpærəfreɪz/','v. 转述','to rephrase','Paraphrase the text.','转述文本。','para(旁边)+phrase'),
+('summarize','/ˈsʌməraɪz/','v. 总结','to give a summary','Summarize the article.','总结文章。','summ(总)+arize'),
+('condense','/kənˈdens/','v. 浓缩','to make shorter','Condense the report.','压缩报告。','con+dense(密)'),
+('excerpt','/ˈeksɜːpt/','n. 摘录','extract from text','Read an excerpt from the book.','读一段书的摘录。'),
+('glossary','/ˈɡlɒsəri/','n. 术语表','list of terms','Check the glossary.','查看术语表。'),
+('preface','/ˈprefɪs/','n. 序言','introductory text','The preface explains purpose.','序言解释目的。','pre+face(说)'),
+('epilogue','/ˈepɪlɒɡ/','n. 后记','concluding section','The epilogue wraps up the story.','后记总结了故事。','epi(在后)+logue(说)'),
+('chronicle','/ˈkrɒnɪkl/','n. 编年史','historical record','A chronicle of events.','事件编年史。','chron(时间)+icle'),
+('anecdote','/ˈænɪkdəʊt/','n. 轶事','short amusing story','Share an anecdote.','分享一个轶事。'),
+('protagonist','/prəˈtæɡənɪst/','n. 主角','main character','The protagonist overcomes obstacles.','主角克服障碍。','prot(第一)+agon(行动)+ist'),
+('antagonist','/ænˈtæɡənɪst/','n. 反派','opposing character','The antagonist creates conflict.','反派制造冲突。','ant+agon(行动)+ist'),
+('climax','/ˈklaɪmæks/','n. 高潮','highest point','The climax of the story.','故事的高潮。'),
+('denouement','/deɪˈnuːmɒŋ/','n. 结局','final outcome','The denouement surprised readers.','结局让读者惊讶。'),
+('suspense','/səˈspens/','n. 悬念','tension','The suspense kept readers hooked.','悬念让读者欲罢不能。'),
+('fiction','/ˈfɪkʃn/','n. 小说','imaginary stories','Science fiction is popular.','科幻小说很流行。','fict(造)+ion'),
+('nonfiction','/ˌnɒnˈfɪkʃn/','n. 非虚构','factual writing','Nonfiction educates readers.','非虚构作品教育读者。'),
+('poetry','/ˈpəʊɪtri/','n. 诗歌','literary art form','Poetry expresses emotions.','诗歌表达情感。'),
+('prose','/prəʊz/','n. 散文','ordinary writing','Clear prose is valued.','清晰的散文受重视。'),
+('genre','/ˈʒɒnrə/','n. 体裁','category of art','Each genre has conventions.','每种体裁有其惯例。'),
+('allegory','/ˈælɪɡəri/','n. 寓言','symbolic story','Animal Farm is an allegory.','《动物庄园》是寓言。','alleg(其他)+ory'),
+('paradox','/ˈpærədɒks/','n. 悖论','contradictory truth','This is a paradox.','这是一个悖论。','para(超越)+dox(观点)'),
+('dystopia','/dɪsˈtəʊpiə/','n. 反乌托邦','imagined bad society','Dystopian fiction warns us.','反乌托邦小说警示我们。','dys(坏)+topia(地方)'),
+('utopia','/juːˈtəʊpiə/','n. 乌托邦','ideal society','Utopia is unattainable.','乌托邦是无法实现的。','u(没有)+topia(地方)'),
+('canvas','/ˈkænvəs/','n. 画布','painting surface','Paint on canvas.','在画布上画画。'),
+('sculpture','/ˈskʌlptʃə/','n. 雕塑','3D art','Bronze sculpture in the park.','公园里的铜雕塑。'),
+('exhibition','/ˌeksɪˈbɪʃn/','n. 展览','public display','Art exhibition downtown.','市中心的艺术展览。','ex+hibit(持有)+ion'),
+('gallery','/ˈɡæləri/','n. 画廊','art display room','Visit the gallery.','参观画廊。'),
+('portrait','/ˈpɔːtrɪt/','n. 肖像','person depiction','A portrait of the queen.','女王的肖像。'),
+('mural','/ˈmjʊərəl/','n. 壁画','wall painting','Colorful mural on the wall.','墙上色彩斑斓的壁画。'),
+('abstract','/ˈæbstrækt/','adj. 抽象的','non-representational','Abstract art is subjective.','抽象艺术是主观的。'),
+('aesthetic','/iːsˈθetɪk/','n. 美感','sense of beauty','The design has good aesthetic.','设计有很好的美感。'),
+('symphony','/ˈsɪmfəni/','n. 交响乐','orchestral composition','Beethoven symphony.','贝多芬交响乐。','sym(共同)+phony(声音)'),
+('concerto','/kənˈtʃɜːtəʊ/','n. 协奏曲','solo instrument piece','Piano concerto performance.','钢琴协奏曲表演。'),
+('melody','/ˈmelədi/','n. 旋律','tune','A beautiful melody.','一段优美的旋律。'),
+('harmony','/ˈhɑːməni/','n. 和声','musical agreement','Vocal harmony is beautiful.','和声很美。'),
+('rhythm','/ˈrɪðəm/','n. 节奏','pattern of beats','Feel the rhythm.','感受节奏。'),
+('tempo','/ˈtempəʊ/','n. 速度','pace of music','Fast tempo energizes.','快速节奏让人充满活力。'),
+('choreography','/ˌkɒriˈɒɡrəfi/','n. 编舞','dance design','The choreography was innovative.','编舞很有创意。','chore(舞蹈)+graphy'),
+('repertoire','/ˈrepətwɑː/','n. 曲目;技能范围','collection of works','Expand your repertoire.','扩展你的曲目。'),
+('improvise','/ˈɪmprəvaɪz/','v. 即兴创作','to create spontaneously','Jazz musicians improvise.','爵士乐手即兴演奏。','im+pro+vis(看)'),
+]
+for w in d:
+    cid += 1
+    wr,ph,m,me,ex,et = w[0],w[1],w[2],w[3],w[4],w[5]
+    r = w[6] if len(w) > 6 else ''
+    rs = f', roots: "{r}"' if r else ''
+    c += f'  {{ id: "w{cid:03d}", word: "{wr}", phonetic: "{ph}", meaning: "{m}", meaningEn: "{me}", example: "{ex}", exampleTranslation: "{et}"{rs}, level: "core" as const, tags: ["高频"] }},\n'
+c += '];\n'
+with open(VOCAB,'w',encoding='utf-8') as f:
+    f.write(c)
+print(f'Added {len(d)} words, total: {cid}')

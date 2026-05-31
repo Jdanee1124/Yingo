@@ -1,0 +1,107 @@
+import re
+VOCAB = r'D:\Claude cli\MyApp\yingo\src\data\vocab-sample.ts'
+with open(VOCAB,'r',encoding='utf-8') as f:
+    c = f.read()
+c = re.sub(r'];\s*$', '', c)
+ids = re.findall(r'id:\s*"w(\d+)"', c)
+cid = max(int(x) for x in ids) if ids else 0
+print(f'Current: w{cid}')
+d = [
+('devote','/dɪˈvəʊt/','v. 致力于','to dedicate','Devote time to study.','致力于学习。','de+vow+ate'),
+('comprise','/kəmˈpraɪz/','v. 包含','to consist of','The team comprises experts.','团队由专家组成。'),
+('entail','/ɪnˈteɪl/','v. 需要','to require','The task entails effort.','任务需要努力。'),
+('encompass','/ɪnˈkʌmpəs/','v. 包含','to include','The course encompasses many topics.','课程包含很多主题。'),
+('constitute','/ˈkɒnstɪtjuːt/','v. 构成','to make up','These factors constitute success.','这些因素构成成功。'),
+('embody','/ɪmˈbɒdi/','v. 体现','to represent','Embody the values.','体现价值观。'),
+('manifest','/ˈmænɪfest/','v. 表明','to show clearly','Symptoms manifest early.','症状早期显现。'),
+('exemplify','/ɪɡˈzemplɪfaɪ/','v. 举例说明','to serve as example','Exemplify the concept.','举例说明概念。'),
+('underscore','/ˌʌndəˈskɔː/','v. 强调','to emphasize','Underscore the importance.','强调重要性。'),
+('bolster','/ˈbəʊlstə/','v. 支持','to strengthen','Bolster confidence.','增强信心。'),
+('impede','/ɪmˈpiːd/','v. 阻碍','to hinder','Lack of funding impedes progress.','缺乏资金阻碍进展。'),
+('facilitate','/fəˈsɪlɪteɪt/','v. 促进','to make easier','Technology facilitates learning.','技术促进学习。','facil(容易)+itate'),
+('exacerbate','/ɪɡˈzæsəbeɪt/','v. 加剧','to make worse','Pollution exacerbates asthma.','污染加剧哮喘。'),
+('alleviate','/əˈliːvieɪt/','v. 减轻','to make less severe','Alleviate pain.','减轻疼痛。','al+levi(轻)+ate'),
+('mitigate','/ˈmɪtɪɡeɪt/','v. 缓解','to reduce severity','Mitigate the risk.','缓解风险。'),
+('curtail','/kɜːˈteɪl/','v. 削减','to reduce','Curtail spending.','削减开支。'),
+('amass','/əˈmæs/','v. 积累','to gather','Amass wealth.','积累财富。'),
+('conserve','/kənˈsɜːv/','v. 节约','to protect','Conserve energy.','节约能源。'),
+('deplete','/dɪˈpliːt/','v. 耗尽','to exhaust','Resources are depleted.','资源耗尽了。'),
+('replenish','/rɪˈplenɪʃ/','v. 补充','to refill','Replenish supplies.','补充供应。'),
+('divert','/daɪˈvɜːt/','v. 转移','to redirect','Divert attention.','转移注意力。','di+vert(转)'),
+('revert','/rɪˈvɜːt/','v. 恢复','to go back','Revert to original state.','恢复原状。'),
+('subvert','/səbˈvɜːt/','v. 颠覆','to overthrow','Subvert the system.','颠覆系统。'),
+('invoke','/ɪnˈvəʊk/','v. 援引','to call upon','Invoke the law.','援引法律。'),
+('provoke','/prəˈvəʊk/','v. 激怒','to anger','Provoke a reaction.','激起反应。'),
+('evoke','/ɪˈvəʊk/','v. 唤起','to recall','Evoke memories.','唤起记忆。'),
+('convoke','/kənˈvəʊk/','v. 召集','to assemble','Convoke a meeting.','召集会议。'),
+('invoke','/ɪnˈvəʊk/','v. 调用','to use','Invoke a function.','调用函数。'),
+('revoke','/rɪˈvəʊk/','v. 撤销','to cancel','Revoke the license.','撤销许可证。'),
+('propagate','/ˈprɒpəɡeɪt/','v. 传播','to spread','Propagate ideas.','传播思想。'),
+('disperse','/dɪˈspɜːs/','v. 分散','to scatter','Crowd dispersed.','人群散了。'),
+('coalesce','/ˌkəʊəˈles/','v. 合并','to merge','Groups coalesced into one.','小组合并为一个。'),
+('consolidate','/kənˈsɒlɪdeɪt/','v. 巩固','to strengthen','Consolidate power.','巩固权力。'),
+('erode','/ɪˈrəʊd/','v. 侵蚀','to wear away','Trust has eroded.','信任被侵蚀了。'),
+('crumble','/ˈkrʌmbl/','v. 崩溃','to fall apart','The empire crumbled.','帝国崩溃了。'),
+('flourish','/ˈflʌrɪʃ/','v. 茂盛','to grow well','Art flourished in the Renaissance.','文艺复兴时期艺术繁荣。'),
+('stagnate','/ˈstæɡneɪt/','v. 停滞','to become stagnant','Economy stagnated.','经济停滞了。'),
+('proliferate','/prəˈlɪfəreɪt/','v. 扩散','to multiply','Data has proliferated.','数据激增了。'),
+('eradicate','/ɪˈrædɪkeɪt/','v. 根除','to eliminate completely','Eradicate poverty.','根除贫困。','e+radic(根)+ate'),
+('uproot','/ʌpˈruːt/','v. 根除','to remove completely','Uproot corruption.','根除腐败。'),
+('embed','/ɪmˈbed/','v. 嵌入','to implant','Embed the chip.','嵌入芯片。'),
+('infuse','/ɪnˈfjuːz/','v. 注入','to instill','Infuse new energy.','注入新能量。'),
+('incorporate','/ɪnˈkɔːpəreɪt/','v. 合并','to include','Incorporate feedback.','纳入反馈。'),
+('instigate','/ˈɪnstɪɡeɪt/','v. 煽动','to provoke','Instigate change.','煽动变革。'),
+('advocate','/ˈædvəkeɪt/','v. 提倡','to support publicly','Advocate for rights.','倡导权利。'),
+('champion','/ˈtʃæmpiən/','v. 拥护','to support','Champion the cause.','拥护这一事业。'),
+('endorse','/ɪnˈdɔːs/','v. 赞同','to support','Endorse the proposal.','赞同提案。'),
+('ratify','/ˈrætɪfaɪ/','v. 批准','to approve formally','Ratify the agreement.','批准协议。'),
+('veto','/ˈviːtəʊ/','v. 否决','to reject','Veto the bill.','否决法案。'),
+('mandate','/ˈmændeɪt/','v. 授权;命令','to authorize','Mandate compliance.','强制执行。'),
+('delegate','/ˈdelɪɡeɪt/','v. 委派','to assign','Delegate tasks.','委派任务。'),
+('supervise','/ˈsuːpəvaɪz/','v. 监督','to oversee','Supervise the project.','监督项目。'),
+('coordinate','/kəʊˈɔːdɪneɪt/','v. 协调','to organize','Coordinate efforts.','协调工作。'),
+('administer','/ədˈmɪnɪstə/','v. 管理','to manage','Administer the program.','管理项目。'),
+('implement','/ˈɪmplɪment/','v. 实施','to put into effect','Implement the plan.','实施计划。'),
+('execute','/ˈeksɪkjuːt/','v. 执行','to carry out','Execute the strategy.','执行策略。'),
+('formulate','/ˈfɔːmjuleɪt/','v. 制定','to create','Formulate a policy.','制定政策。'),
+('devise','/dɪˈvaɪz/','v. 设计','to invent','Devise a solution.','设计解决方案。'),
+('pioneer','/ˌpaɪəˈnɪə/','v. 开创','to be first','Pioneer new methods.','开创新方法。'),
+('spearhead','/ˈspɪəhed/','v. 带头','to lead','Spearhead the campaign.','带头运动。'),
+('forge','/fɔːdʒ/','v. 锻造;建立','to create firmly','Forge partnerships.','建立伙伴关系。'),
+('cultivate','/ˈkʌltɪveɪt/','v. 培养','to develop','Cultivate relationships.','培养关系。','cultiv(耕种)+ate'),
+('nurture','/ˈnɜːtʃə/','v. 养育','to nurture','Nurture talent.','养育人才。'),
+('harness','/ˈhɑːnɪs/','v. 利用','to utilize','Harness solar energy.','利用太阳能。'),
+('leverage','/ˈlevərɪdʒ/','v. 利用','to exploit','Leverage technology.','利用技术。'),
+('capitalize','/ˈkæpɪtəlaɪz/','v. 利用','to take advantage','Capitalize on opportunities.','利用机会。'),
+('optimize','/ˈɒptɪmaɪz/','v. 优化','to make best use','Optimize performance.','优化性能。'),
+('streamline','/ˈstriːmlaɪn/','v. 精简','to simplify','Streamline processes.','精简流程。'),
+('overhaul','/ˈəʊvəhɔːl/','v. 大修','to renovate','Overhaul the system.','大修系统。'),
+('revamp','/riːˈvæmp/','v. 改造','to renovate','Revamp the website.','改造网站。'),
+('refurbish','/riːˈfɜːbɪʃ/','v. 翻新','to renovate','Refurbish the office.','翻新办公室。'),
+('obsolete','/ˈɒbsəliːt/','v. 淘汰','to make outdated','New tech obsoletes old.','新技术淘汰旧技术。'),
+('automate','/ˈɔːtəmeɪt/','v. 使自动化','to make automatic','Automate the process.','使流程自动化。'),
+('augment','/ɔːɡˈment/','v. 增强','to increase','Augment reality technology.','增强现实技术。'),
+('supplement','/ˈsʌplɪment/','v. 补充','to add to','Supplement the income.','补充收入。'),
+('complement','/ˈkɒmplɪment/','v. 补充','to complete','Complement each other.','互相补充。'),
+('offset','/ˈɒfset/','v. 抵消','to compensate','Offset the cost.','抵消成本。'),
+('neutralize','/ˈnjuːtrəlaɪz/','v. 中和','to counteract','Neutralize the threat.','中和威胁。'),
+('counteract','/ˌkaʊntərˈækt/','v. 抵抗','to oppose','Counteract the effects.','抵抗影响。'),
+('nullify','/ˈnʌlɪfaɪ/','v. 使无效','to invalidate','Nullify the contract.','使合同无效。'),
+('annul','/əˈnʌl/','v. 废除','to cancel','Annul the marriage.','废除婚姻。'),
+('invalidate','/ɪnˈvælɪdeɪt/','v. 使无效','to make void','Invalidate the results.','使结果无效。'),
+('substantiate','/səbˈstænʃieɪt/','v. 证实','to prove','Substantiate the claim.','证实声明。'),
+('corroborate','/kəˈrɒbəreɪt/','v. 证实','to confirm','Corroborate the evidence.','证实证据。'),
+('verify','/ˈverɪfaɪ/','v. 核实','to check','Verify the information.','核实信息。','ver(真实)+ify'),
+('authenticate','/ɔːˈθentɪkeɪt/','v. 验证','to prove genuine','Authenticate the document.','验证文件。'),
+('ascertain','/ˌæsəˈteɪn/','v. 确定','to find out','Ascertain the truth.','确定真相。'),
+]
+for w in d:
+    cid += 1
+    wr,ph,m,me,ex,et = w[0],w[1],w[2],w[3],w[4],w[5]
+    r = w[6] if len(w) > 6 else ''
+    rs = f', roots: "{r}"' if r else ''
+    c += f'  {{ id: "w{cid:03d}", word: "{wr}", phonetic: "{ph}", meaning: "{m}", meaningEn: "{me}", example: "{ex}", exampleTranslation: "{et}"{rs}, level: "core" as const, tags: ["高频"] }},\n'
+c += '];\n'
+with open(VOCAB,'w',encoding='utf-8') as f:
+    f.write(c)
+print(f'Added {len(d)} words, total: {cid}')

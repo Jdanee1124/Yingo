@@ -1,0 +1,108 @@
+import re
+VOCAB = r'D:\Claude cli\MyApp\yingo\src\data\vocab-sample.ts'
+with open(VOCAB,'r',encoding='utf-8') as f:
+    c = f.read()
+c = re.sub(r'];\s*$', '', c)
+ids = re.findall(r'id:\s*"w(\d+)"', c)
+cid = max(int(x) for x in ids) if ids else 0
+print(f'Current: w{cid}')
+d = [
+('technology','/tekˈnɒlədʒi/','n. 技术','application of science','Technology transforms lives.','技术改变生活。','techno(技艺)+logy'),
+('innovation','/ˌɪnəˈveɪʃn/','n. 创新','introduction of new ideas','Innovation drives progress.','创新驱动进步。','in+nov(新)+ation'),
+('artificial','/ˌɑːtɪˈfɪʃl/','adj. 人工的','made by humans','Artificial intelligence is advancing.','人工智能在发展。','art(技艺)+fic+ial'),
+('automation','/ˌɔːtəˈmeɪʃn/','n. 自动化','automatic operation','Factory automation increases output.','工厂自动化提高产量。','auto(自己)+mation'),
+('algorithm','/ˈælɡərɪðəm/','n. 算法','step-by-step procedure','The algorithm optimizes search.','算法优化搜索。',''),
+('software','/ˈsɒftweə/','n. 软件','computer programs','Software development is complex.','软件开发很复杂。','soft+ware'),
+('hardware','/ˈhɑːdweə/','n. 硬件','physical components','Hardware upgrades improve speed.','硬件升级提高速度。','hard+ware'),
+('database','/ˈdeɪtəbeɪs/','n. 数据库','organized data collection','The database stores millions of records.','数据库存储数百万条记录。','data+base'),
+('network','/ˈnetwɜːk/','n. 网络','connected system','Global network connectivity.','全球网络连接。','net+work'),
+('bandwidth','/ˈbændwɪdθ/','n. 带宽','data transfer capacity','Higher bandwidth needed.','需要更高带宽。','band+width'),
+('cybersecurity','/ˌsaɪbəsɪˈkjʊərəti/','n. 网络安全','digital protection','Cybersecurity threats increase.','网络安全威胁增加。','cyber(网络)+security'),
+('encryption','/ɪnˈkrɪpʃn/','n. 加密','data coding','End-to-end encryption protects data.','端到端加密保护数据。','en+crypt(隐藏)+ion'),
+('robot','/ˈrəʊbɒt/','n. 机器人','automated machine','Robots perform dangerous tasks.','机器人执行危险任务。',''),
+('satellite','/ˈsætəlaɪt/','n. 卫星','orbiting object','Satellite images reveal changes.','卫星图像揭示变化。','satell(伴随)+ite'),
+('sensor','/ˈsensə/','n. 传感器','detection device','Temperature sensors monitor the lab.','温度传感器监控实验室。','sens(感觉)+or'),
+('circuit','/ˈsɜːkɪt/','n. 电路','electronic path','Integrated circuit design.','集成电路设计。','circ(环)+uit'),
+('nucleus','/ˈnjuːkliəs/','n. 细胞核','central part','The nucleus contains DNA.','细胞核含有DNA。','nucle(核)+us'),
+('gene','/dʒiːn/','n. 基因','unit of heredity','Gene therapy shows promise.','基因疗法前景看好。',''),
+('chromosome','/ˈkrəʊməsəʊm/','n. 染色体','DNA structure','Chromosomes carry genetic information.','染色体携带遗传信息。','chrom(颜色)+some(体)'),
+('enzyme','/ˈenzaɪm/','n. 酶','biological catalyst','Enzymes speed up reactions.','酶加速反应。','en+zym(酵母)'),
+('protein','/ˈprəʊtiːn/','n. 蛋白质','essential molecule','Protein is vital for growth.','蛋白质对生长至关重要。',''),
+('organism','/ˈɔːɡənɪzəm/','n. 有机体','living being','Every organism adapts.','每个有机体都在适应。','organ(器官)+ism'),
+('evolution','/ˌiːvəˈluːʃn/','n. 进化','gradual development','Evolution by natural selection.','自然选择的进化。','e+volut(卷)+ion'),
+('mutation','/mjuːˈteɪʃn/','n. 突变','genetic change','Random mutations occur.','随机突变发生。','mut(变化)+ation'),
+('antibiotic','/ˌæntɪbaɪˈɒtɪk/','n. 抗生素','bacteria-killing drug','Antibiotics treat infections.','抗生素治疗感染。','anti(抗)+bio(生命)+tic'),
+('vaccine','/ˈvæksiːn/','n. 疫苗','immunization substance','Vaccines prevent diseases.','疫苗预防疾病。','vacc(牛)+ine'),
+('diagnosis','/ˌdaɪəɡˈnəʊsɪs/','n. 诊断','identification of disease','Early diagnosis saves lives.','早期诊断挽救生命。','dia(穿过)+gnosis(知道)'),
+('therapy','/ˈθerəpi/','n. 治疗','treatment process','Physical therapy helps recovery.','物理治疗帮助康复。','therap(治疗)+y'),
+('rehabilitation','/ˌriːəˌbɪlɪˈteɪʃn/','n. 康复','restoration of function','Rehabilitation takes time.','康复需要时间。','re+habilit(能力)+ation'),
+('nutrition','/njuːˈtrɪʃn/','n. 营养','food and health','Good nutrition is essential.','良好营养至关重要。','nutri(滋养)+tion'),
+('metabolism','/məˈtæbəlɪzəm/','n. 新陈代谢','chemical processes in body','Exercise boosts metabolism.','运动促进新陈代谢。','meta(变化)+bol(投)+ism'),
+('obesity','/əʊˈbiːsəti/','n. 肥胖','excessive weight','Childhood obesity is rising.','儿童肥胖在上升。'),
+('diabetes','/ˌdaɪəˈbiːtiːz/','n. 糖尿病','blood sugar disease','Type 2 diabetes is common.','2型糖尿病很常见。'),
+('hypertension','/ˌhaɪpəˈtenʃn/','n. 高血压','high blood pressure','Hypertension risks heart disease.','高血压增加心脏病风险。','hyper(过度)+tension(张力)'),
+('cholesterol','/kəˈlestərɒl/','n. 胆固醇','fat-like substance','High cholesterol is dangerous.','高胆固醇很危险。'),
+('cardiovascular','/ˌkɑːdiəʊˈvæskjələ/','adj. 心血管的','relating to heart and vessels','Cardiovascular health matters.','心血管健康很重要。','cardio(心脏)+vascular(血管)'),
+('respiratory','/rəˈspɪrətəri/','adj. 呼吸的','relating to breathing','Respiratory diseases affect lungs.','呼吸系统疾病影响肺部。','re+spir(呼吸)+atory'),
+('neurological','/ˌnjʊərəˈlɒdʒɪkl/','adj. 神经学的','relating to nervous system','Neurological research advances.','神经学研究在进步。','neuro(神经)+logical'),
+('psychiatric','/ˌsaɪkiˈætrɪk/','adj. 精神科的','relating to mental illness','Psychiatric care is important.','精神科护理很重要。','psych(心灵)+iatric'),
+('anxiety','/æŋˈzaɪəti/','n. 焦虑','worry and nervousness','Anxiety disorders are treatable.','焦虑症可治疗。','anxi(焦虑)+ety'),
+('depression','/dɪˈpreʃn/','n. 抑郁','persistent sadness','Clinical depression needs treatment.','临床抑郁需要治疗。','de+press(压)+ion'),
+('insomnia','/ɪnˈsɒmniə/','n. 失眠','inability to sleep','Insomnia affects productivity.','失眠影响生产力。','in+somn(睡)+ia'),
+('trauma','/ˈtrɔːmə/','n. 创伤','emotional wound','Childhood trauma has lasting effects.','童年创伤有持久影响。'),
+('fracture','/ˈfræktʃə/','n. 骨折','broken bone','Bone fracture heals slowly.','骨折愈合缓慢。','fract(打碎)+ure'),
+('allergy','/ˈælədʒi/','n. 过敏','immune overreaction','Food allergies are common.','食物过敏很常见。'),
+('asthma','/ˈæsmə/','n. 哮喘','breathing condition','Asthma requires medication.','哮喘需要药物治疗。'),
+('prescription','/prɪˈskrɪpʃn/','n. 处方','doctor order for medicine','Get a prescription filled.','去配处方药。','pre+script(写)+ion'),
+('pharmaceutical','/ˌfɑːməˈsuːtɪkl/','adj. 制药的','relating to drugs','Pharmaceutical industry grows.','制药行业在增长。','pharma(药)+ceutical'),
+('surgery','/ˈsɜːdʒəri/','n. 手术','medical operation','Minor surgery was performed.','进行了小手术。'),
+('anesthesia','/ˌænəsˈθiːziə/','n. 麻醉','loss of sensation','Local anesthesia was used.','使用了局部麻醉。','an+esthesia(感觉)'),
+('biopsy','/ˈbaɪɒpsi/','n. 活检','tissue examination','A biopsy confirmed the diagnosis.','活检确认了诊断。','bio(生命)+psy(看)'),
+('ultrasound','/ˈʌltrəsaʊnd/','n. 超声波','high-frequency sound','Ultrasound shows internal images.','超声波显示内部图像。','ultra+sound'),
+('contamination','/kənˌtæmɪˈneɪʃn/','n. 污染','making impure','Water contamination is serious.','水污染很严重。','con+tamin(接触)+ation'),
+('toxic','/ˈtɒksɪk/','adj. 有毒的','poisonous','Toxic chemicals harm the environment.','有毒化学物伤害环境。','tox(毒)+ic'),
+('pesticide','/ˈpestɪsaɪd/','n. 杀虫剂','pest-killing chemical','Pesticide overuse damages soil.','过度使用杀虫剂损害土壤。','pest(害虫)+cide(杀)'),
+('greenhouse','/ˈɡriːnhaʊs/','n. 温室','glass building for plants','Greenhouse gas emissions rise.','温室气体排放增加。'),
+('emission','/ɪˈmɪʃn/','n. 排放','release of substance','Carbon emissions must be reduced.','碳排放必须减少。','e+miss(送)+ion'),
+('sustainability','/səˌsteɪnəˈbɪləti/','n. 可持续性','ability to maintain','Environmental sustainability matters.','环境可持续性很重要。'),
+('renewable','/rɪˈnjuːəbl/','adj. 可再生的','can be renewed','Renewable energy sources grow.','可再生能源在增长。','re+new+able'),
+('biodiversity','/ˌbaɪəʊdaɪˈvɜːsəti/','n. 生物多样性','variety of life','Biodiversity loss is alarming.','生物多样性丧失令人担忧。','bio(生命)+diversity'),
+('conservation','/ˌkɒnsəˈveɪʃn/','n. 保护','preservation','Wildlife conservation is critical.','野生动物保护至关重要。','con+serv(保持)+ation'),
+('extinction','/ɪkˈstɪŋkʃn/','n. 灭绝','dying out','Mass extinction threatens species.','大规模灭绝威胁物种。','ex+tinct(刺)+ion'),
+('habitat','/ˈhæbɪtæt/','n. 栖息地','natural home','Habitat destruction causes decline.','栖息地破坏导致下降。','habit(居住)+at'),
+('ecosystem','/ˈiːkəʊsɪstəm/','n. 生态系统','ecological community','The ecosystem is fragile.','生态系统很脆弱。','eco(生态)+system'),
+('deforestation','/ˌdiːfɒrɪˈsteɪʃn/','n. 森林砍伐','clearing forests','Deforestation accelerates climate change.','森林砍伐加速气候变化。','de+forest+ation'),
+('erosion','/ɪˈrəʊʒn/','n. 侵蚀','wearing away','Soil erosion is a problem.','土壤侵蚀是个问题。','e+ros(啃)+ion'),
+('precipitation','/prɪˌsɪpɪˈteɪʃn/','n. 降水','rain or snow','Annual precipitation varies.','年降水量变化。','pre+cipit(头)+ation'),
+('drought','/draʊt/','n. 干旱','severe water shortage','The drought lasted months.','干旱持续数月。'),
+('flood','/flʌd/','n. 洪水','overflow of water','Flash floods are dangerous.','山洪很危险。'),
+('earthquake','/ˈɜːθkweɪk/','n. 地震','seismic event','The earthquake caused damage.','地震造成了破坏。'),
+('volcano','/vɒlˈkeɪnəʊ/','n. 火山','mountain with eruption','The volcano erupted violently.','火山猛烈喷发。'),
+('glacier','/ˈɡlæsiə/','n. 冰川','large ice mass','Glaciers are melting rapidly.','冰川正在快速融化。'),
+('coral','/ˈkɒrəl/','n. 珊瑚','marine organism','Coral reefs are dying.','珊瑚礁正在死亡。'),
+('wetland','/ˈwetlənd/','n. 湿地','waterlogged area','Wetlands filter water naturally.','湿地自然过滤水源。'),
+('mangrove','/ˈmæŋɡrəʊv/','n. 红树林','coastal tree','Mangroves protect coastlines.','红树林保护海岸线。'),
+('predator','/ˈpredətə/','n. 捕食者','hunting animal','Apex predators regulate ecosystems.','顶级捕食者调节生态系统。','pred(掠夺)+ator'),
+('prey','/preɪ/','n. 猎物','hunted animal','The eagle spotted its prey.','鹰发现了猎物。'),
+('symbiosis','/ˌsɪmbaɪˈəʊsɪs/','n. 共生','mutual relationship','Symbiosis benefits both species.','共生使两个物种受益。','sym(共同)+bio(生命)+sis'),
+('photosynthesis','/ˌfəʊtəʊˈsɪnθəsɪs/','n. 光合作用','light energy conversion','Photosynthesis produces oxygen.','光合作用产生氧气。','photo(光)+synthesis'),
+('metamorphosis','/ˌmetəˈmɔːfəsɪs/','n. 变态;蜕变','transformation','The caterpillar undergoes metamorphosis.','毛毛虫经历变态。','meta(变化)+morph(形态)+osis'),
+('pollinate','/ˈpɒlɪneɪt/','v. 授粉','transfer pollen','Bees pollinate flowers.','蜜蜂给花授粉。','pollin(花粉)+ate'),
+('germinate','/ˈdʒɜːmɪneɪt/','v. 发芽','to begin to grow','Seeds germinate in spring.','种子在春天发芽。','germ(芽)+inate'),
+('hibernate','/ˈhaɪbəneɪt/','v. 冬眠','to sleep through winter','Bears hibernate in winter.','熊在冬天冬眠。','hibern(冬天)+ate'),
+('migrate','/maɪˈɡreɪt/','v. 迁徙','to move seasonally','Birds migrate south in winter.','鸟类冬天南迁。','migr(迁移)+ate'),
+('degrade','/dɪˈɡreɪd/','v. 降解;退化','to break down','Plastics degrade slowly.','塑料降解缓慢。','de+grade(等级)'),
+('deteriorate','/dɪˈtɪəriəreɪt/','v. 恶化','to become worse','Air quality deteriorates.','空气质量恶化。'),
+('flourish','/ˈflʌrɪʃ/','v. 繁荣','to thrive','Plants flourish in sunlight.','植物在阳光下繁荣。'),
+('perish','/ˈperɪʃ/','v. 灭亡','to die','Species perish without adaptation.','物种不适应就会灭亡。'),
+]
+for w in d:
+    cid += 1
+    wr,ph,m,me,ex,et = w[0],w[1],w[2],w[3],w[4],w[5]
+    r = w[6] if len(w) > 6 else ''
+    rs = f', roots: "{r}"' if r else ''
+    c += f'  {{ id: "w{cid:03d}", word: "{wr}", phonetic: "{ph}", meaning: "{m}", meaningEn: "{me}", example: "{ex}", exampleTranslation: "{et}"{rs}, level: "core" as const, tags: ["高频"] }},\n'
+c += '];\n'
+with open(VOCAB,'w',encoding='utf-8') as f:
+    f.write(c)
+print(f'Added {len(d)} words, total: {cid}')
